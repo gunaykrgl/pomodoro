@@ -1,9 +1,9 @@
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs"
-import DateTimeRange from "../../types/DateTimeRange";
+// import DateTimeRange from "../../types/DateTimeRange";
 
 export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ string: [{ start: Date, end: Date }] }], selectedTab: string, setSelectedTab: Function }) {
     const sortedDates = Object.keys(data).sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime());
-    const dayDifference = ((new Date(sortedDates[sortedDates.length - 1]).getDay() - new Date(sortedDates[0]).getDay()) / (1000 * 3600 * 24)) || 1
+    // const dayDifference = ((new Date(sortedDates[sortedDates.length - 1]).getDay() - new Date(sortedDates[0]).getDay()) / (1000 * 3600 * 24)) || 1
 
     const limitedSortedDates = sortedDates.slice(0, 2);
     if (limitedSortedDates.length > 0 && !selectedTab) setSelectedTab(limitedSortedDates[0])
@@ -35,7 +35,7 @@ export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ 
 
                 {sortedDates.length >= 3 && <select className={`outline-none bg-transparent text-xl ${limitedSortedDates.every(el => el !== selectedTab) ? "underline" : ""}`}
                     onChange={(e) => setSelectedTab(e.target.value)} value={selectedTab}
-                    onClick={e => sortedDates.length === 3 ? setSelectedTab(sortedDates[2]) : null}
+                    onClick={_ => sortedDates.length === 3 ? setSelectedTab(sortedDates[2]) : null}
 
                 >
                     {sortedDates.slice(2).map((date: any) => {
@@ -51,6 +51,7 @@ export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ 
                             <div className="h-52 overflow-auto">
 
                                 {
+                                    // @ts-ignore
                                     works_in_selected_tab.map((e: any) => {
                                         const duration = Math.floor((e.end - e.start) / 1000 / 60);
                                         return (<p>
