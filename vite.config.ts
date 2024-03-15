@@ -5,4 +5,13 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: "/pomodoro/",
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        worker: './src/utils/worker.js'
+      }
+    }
+  }
+  
 })

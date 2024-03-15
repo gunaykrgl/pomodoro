@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-// import { CiPlay1 } from "react-icons/ci";
+import pauseButton from '/src/assets/svg/pauseButton.svg';
+import playButton from '/src/assets/svg/playButton.svg';
+import settingsButton from '/src/assets/svg/settingsButton.svg';
 
 // @ts-ignore
 import useSound from "use-sound";
@@ -7,10 +9,13 @@ import useSound from "use-sound";
 import startWorkSound from "../assets/sounds/Stop.mp3"
 import shutdownSound from "../assets/sounds/Start.mp3"
 
-export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorkedFn }: { workMinutes: Number, breakMinutes: Number, setHoursWorkedFn: Function }) {
-
-    ///!!!!!
+export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorkedFn, setSelectedTab, setShowSettings }: { workMinutes: number, breakMinutes: number, setHoursWorkedFn: Function, setSelectedTab: Function, setShowSettings: Function }) {
+    // Remaining time till the end of the work/break (in seconds)
     const [time, setTime] = useState(Number(workMinutes) * 60);
+
+    // Update The time, when workMinutes setting change
+    useEffect(() => setTime(() => workMinutes * 60), [workMinutes])
+
     const [isRunning, setIsRunning] = useState(false);
     const [isWorkTime, setIsWorkTime] = useState(true);
 
@@ -23,23 +28,18 @@ export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorke
     const [startWorkPlay] = useSound(startWorkSound)
     const [shutdownPlay] = useSound(shutdownSound)
 
+    // Worker to update the time
     useEffect(() => {
         if (!isRunning) return;
-
-        const worker = new Worker("src/utils/worker.js")
-        worker.postMessage('start')
+        const worker = new Worker(new URL("/src/utils/worker.js", import.meta.url))
 
         worker.onmessage = () => {
             setTime((prev: any) => {
                 if (prev <= 0) {
                     if (isWorkTime) {
-                        setIsWorkTime(false)
-                        shutdownPlay()
                         handleWorkSessionEnd()
                         return Number(breakMinutes) * 60
                     } else {
-                        setIsWorkTime(true)
-                        startWorkPlay()
                         handleStart()
                         return Number(workMinutes) * 60
                     }
@@ -48,56 +48,58 @@ export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorke
             })
             document.title = `${(hours * 60 + minutes).toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
         }
+
+        worker.postMessage('start')
         return () => {
             worker.terminate()
         }
     })
 
     const handleStart = () => {
-        const now = new Date(Date.now())
+        const now = new Date()
+        setSelectedTab(now.toLocaleDateString())
+        startWorkPlay()
         setHoursWorkedFn((prev: any) => {
             if (prev.length > 0 && prev[prev.length - 1].end === null) return prev
-            return [...prev, { start: now, end: null }]
+            return [...prev, { start: new Date(now), end: null }]
         });
         setIsRunning(true);
+        setIsWorkTime(true)
     };
 
     const handleStop = () => {
         setIsRunning(false);
-
         handleWorkSessionEnd()
         // setTime(0);
     };
     const handleStartStop = () => {
-        if (isRunning) {
-            handleStop()
-        } else {
-            handleStart()
-        }
+        isRunning ? handleStop() : handleStart()
     }
 
     const handleReset = () => {
         setIsRunning(false);
-        setIsWorkTime(true);
+        setIsWorkTime(false);
+
+        // Remove last entry from the hoursWorked array
+        setHoursWorkedFn((prev: any) => [...prev.slice(0, prev.length - 1)])
         setTime(Number(workMinutes) * 60);
     }
 
     const handleWorkSessionEnd = () => {
+        shutdownPlay()
         setHoursWorkedFn((prev: any) => {
-            const last = prev[prev.length - 1]
-            if (last.end) return prev
-
-            last.end = new Date(Date.now())
-            return [...prev.slice(0, prev.length - 1), last]
+            return [...prev.slice(0, prev.length - 1), { ...prev[prev.length - 1], end:new Date(Date.now())  }]
         });
+        setIsWorkTime(false)
     }
-
+    
     return (
-        <div>
-            <h1 className='text-4xl text-white p-4'>{hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')}</h1>
-            <div className='flex flex-row gap-4 justify-center'>
-                <button className=" w-24 bg-red-400 h-8" onClick={handleStartStop}>{isRunning ? "⏸ Pause" : "▶ Start"}</button>
-                <button className=' w-24  bg-red-400 h-8' onClick={handleReset}>↺ Reset</button>
+        <div className='w-80'>
+            <h1 className='text-9xl font-micro flex justify-center'>{hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')}</h1>
+            <div className='flex flex-row gap-4 justify-between text-4xl [&>*]:bg-red-400'>
+                <button className='w-16 h-16' onClick={handleStartStop}><img src={isRunning ? pauseButton : playButton} alt="Play or pause button" /></button>
+                <button className='w-16 h-16' onClick={handleReset}>↺</button>
+                <button className='w-16 h-16' onClick={() => setShowSettings((x: boolean) => !x)}><img src={settingsButton} className='m-auto' /></button>
             </div>
         </div>
     );

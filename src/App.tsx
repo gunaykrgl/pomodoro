@@ -2,24 +2,32 @@ import PomodoroClock from "./components/PomodoroClock"
 import { useState, useEffect } from "react"
 import DateTimeRange from "../types/DateTimeRange"
 import Table from "./components/Table";
-import Graph from "./components/Graph";
+import BarGraph from "./components/BarGraph";
 import HoursGraph from "./components/HoursGraph";
+import Settings from "./components/Settings";
 
 function App() {
+  const [loading, setLoading] = useState(true);
   const [hoursWorked, setHoursWorked] = useState<DateTimeRange[]>([]);
+  const [showSettings, setShowSettings] = useState(false);
 
-  const hoursWorkedCookie = localStorage.getItem("hoursWorked");
+  const [workMinutes, setWorkMinutes] = useState(25);
+  const [breakMinutes, setBreakMinutes] = useState(5);
 
-  if (hoursWorkedCookie && hoursWorked.length === 0) {
-    const parsedHoursWorked = JSON.parse(hoursWorkedCookie).map((item: DateTimeRange) => ({
-      start: new Date(item.start),
-      end: item.end ? new Date(item.end) : null
-    }));
+  // For Table 
+  const [selectedTab, setSelectedTab] = useState('');
 
-    if (parsedHoursWorked.length > 0) {
+  useEffect(() => {
+    const hoursWorkedCookie = localStorage.getItem("hoursWorked");
+    if (hoursWorkedCookie) {
+      const parsedHoursWorked = JSON.parse(hoursWorkedCookie).map((item: DateTimeRange) => ({
+        start: new Date(item.start),
+        end: new Date(item.end) || null,
+      }));
       setHoursWorked(parsedHoursWorked);
     }
-  }
+    setLoading(false);
+  }, [])
 
   //? Group the data by date
   const groupedData = hoursWorked.reduce((acc: any, curr: any) => {
@@ -29,30 +37,31 @@ function App() {
     }
     acc[startDate].push(curr);
     return acc;
-  }, {});
+  }, {}) || {};
   //? End of grouping the data by date
 
   useEffect(() => {
+    if (loading) return;
     localStorage.setItem("hoursWorked", JSON.stringify(hoursWorked.filter(e => e.end !== null)))
   }, [hoursWorked]);
 
 
-  // const data = [
-  //   { label: 'Task 1', startTime: 0, endTime: 10 },
-  //   { label: 'Task 2', startTime: 15, endTime: 25 },
-  //   { label: 'Task 3', startTime: 30, endTime: 45 },
-  //   // Add more data as needed
-  // ];
+  useEffect(() => { console.log(workMinutes, breakMinutes) }, [workMinutes, breakMinutes]);
 
   return (
-    <div id="container" className="flex flex-col overflow-x-hidden overflow-y-auto bg-slate-800 w-screen h-screen items-center">
-      <PomodoroClock workMinutes={25} breakMinutes={5} setHoursWorkedFn={setHoursWorked} />
-      <br />
-      <Table data={groupedData} />
-      <br />
-      <HoursGraph data={groupedData} />
-      <br />
-      <Graph data={groupedData} />
+    <div className="bg-slate-800 text-white min-w-screen min-h-screen grid grid-cols-1 md:grid-cols-2 md:px-12 py-4 place-items-center">
+      <div>
+        <PomodoroClock workMinutes={workMinutes} breakMinutes={breakMinutes} setHoursWorkedFn={setHoursWorked} setSelectedTab={setSelectedTab} setShowSettings={setShowSettings} />
+        <Settings showSettings={showSettings} setWorkMinutes={setWorkMinutes} setBreakMinutes={setBreakMinutes} workMinutes={workMinutes} breakMinutes={breakMinutes} />
+        <br />
+        <Table data={groupedData} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      </div>
+      <div>
+        <HoursGraph data={groupedData} />
+        {/* <br /> */}
+        <BarGraph data={groupedData} />
+        
+      </div>
     </div>
   )
 }
