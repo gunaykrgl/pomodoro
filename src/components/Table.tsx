@@ -22,18 +22,20 @@ export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ 
     // const averageWorkedMins = Math.floor(sum / dayDifference / 1000 / 60)
 
     return (
-        <Tabs className="cursor-default w-72 select-none"
+        <Tabs className="cursor-default w-full h-full select-none pt-4"
             onSelect={(index) => {
                 const selectedDate = limitedSortedDates[index];
                 setSelectedTab(selectedDate);
             }}
         >
-            <TabList className="flex justify-center cursor-pointer gap-4 text-red-300">
+            <TabList className="justify-center cursor-pointer gap-4 text-red-300 hidden md:flex">
                 {limitedSortedDates.map((date: any) => {
                     return <Tab key={date} className={`outline-none ${date === selectedTab ? "underline" : ""} text-xl`}>{date}</Tab>
                 })}
-
-                {sortedDates.length >= 3 && <select className={`outline-none bg-transparent text-xl ${limitedSortedDates.every(el => el !== selectedTab) ? "underline" : ""}`}
+                {
+                    sortedDates.length == 3 && <Tab key={sortedDates[2]} className={`outline-none ${sortedDates[2] === selectedTab ? "underline" : ""} text-2xl`}>{sortedDates[2]}</Tab>
+                }
+                {sortedDates.length > 3 && <select className={`outline-none bg-transparent text-xl ${limitedSortedDates.every(el => el !== selectedTab) ? "underline" : ""}`}
                     onChange={(e) => setSelectedTab(e.target.value)} value={selectedTab}
                     onClick={_ => sortedDates.length === 3 ? setSelectedTab(sortedDates[2]) : null}
 
@@ -42,22 +44,29 @@ export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ 
                         return <option className="text-black" value={date}>{date}</option>
                     })}
                 </select>}
-
             </TabList>
+            <TabList className="block md:hidden">
+                <select className="w-full text-red-600 bg-transparent border-gray-600 border-4 py-3 text-3xl">
+                    {sortedDates.map((date: any) => {
+                        return <option className="text-black" value={date}>{date}</option>
+                    })}
+                </select>
+            </TabList>
+
             {
                 limitedSortedDates.map((date: any) => {
                     return (
                         <TabPanel title={date}>
-                            <div className="h-52 overflow-auto">
+                            <div className="h-60 lg:h-80 overflow-auto py-4">
 
                                 {
                                     // @ts-ignore
                                     works_in_selected_tab.map((e: any) => {
                                         const duration = Math.floor((e.end - e.start) / 1000 / 60);
-                                        return (<p>
-                                            {e.start.getHours().toString().padStart(2, '0')}:{e.start.getMinutes().toString().padStart(2, '0')} 
+                                        return (<p className="text-xl lg:text-2xl">
+                                            {e.start.getHours().toString().padStart(2, '0')}:{e.start.getMinutes().toString().padStart(2, '0')}
                                             {e.end && `- ${e.end.getHours().toString().padStart(2, '0')}:${e.end.getMinutes().toString().padStart(2, '0')} (${duration} min. worked)`}
-                                            </p>)
+                                        </p>)
                                     })}
                             </div>
                         </TabPanel>

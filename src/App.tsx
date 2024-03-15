@@ -49,18 +49,23 @@ function App() {
   useEffect(() => { console.log(workMinutes, breakMinutes) }, [workMinutes, breakMinutes]);
 
   return (
-    <div className="bg-slate-800 text-white min-w-screen min-h-screen grid grid-cols-1 md:grid-cols-2 md:px-12 py-4 place-items-center">
-      <div>
+    <div className="bg-slate-800 text-white min-w-screen min-h-screen grid
+     grid-cols-1 md:grid-cols-2 md:px-12 2xl:grid-cols-3 py-4 place-items-center">
+      <div className="">
         <PomodoroClock workMinutes={workMinutes} breakMinutes={breakMinutes} setHoursWorkedFn={setHoursWorked} setSelectedTab={setSelectedTab} setShowSettings={setShowSettings} />
         <Settings showSettings={showSettings} setWorkMinutes={setWorkMinutes} setBreakMinutes={setBreakMinutes} workMinutes={workMinutes} breakMinutes={breakMinutes} />
-        <br />
+        <div className="block 2xl:hidden">
+          <Table data={groupedData} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+        </div>
+      </div>
+      <div className="hidden 2xl:block">
         <Table data={groupedData} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
       </div>
       <div>
         <HoursGraph data={groupedData} />
         {/* <br /> */}
         <BarGraph data={groupedData} />
-        
+
       </div>
     </div>
   )
