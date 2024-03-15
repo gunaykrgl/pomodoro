@@ -39,7 +39,7 @@ export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ 
 
                 >
                     {sortedDates.slice(2).map((date: any) => {
-                        return <option value={date}>{date}</option>
+                        return <option className="text-black" value={date}>{date}</option>
                     })}
                 </select>}
 
