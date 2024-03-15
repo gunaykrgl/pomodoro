@@ -81,18 +81,20 @@ export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorke
         setIsWorkTime(false);
 
         // Remove last entry from the hoursWorked array
-        setHoursWorkedFn((prev: any) => [...prev.slice(0, prev.length - 1)])
+        if (isWorkTime) {
+            setHoursWorkedFn((prev: any) => [...prev.slice(0, prev.length - 1)])
+        }
         setTime(Number(workMinutes) * 60);
     }
 
     const handleWorkSessionEnd = () => {
         shutdownPlay()
         setHoursWorkedFn((prev: any) => {
-            return [...prev.slice(0, prev.length - 1), { ...prev[prev.length - 1], end:new Date(Date.now())  }]
+            return [...prev.slice(0, prev.length - 1), { ...prev[prev.length - 1], end: new Date(Date.now()) }]
         });
         setIsWorkTime(false)
     }
-    
+
     return (
         <div>
             <h1 className='text-9xl font-micro flex justify-center'>{hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')}</h1>
