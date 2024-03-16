@@ -89,6 +89,8 @@ export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorke
 
     const handleWorkSessionEnd = () => {
         shutdownPlay()
+
+        if (!isWorkTime) return;
         setHoursWorkedFn((prev: any) => {
             return [...prev.slice(0, prev.length - 1), { ...prev[prev.length - 1], end: new Date(Date.now()) }]
         });
