@@ -33,7 +33,7 @@ export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ 
                     return <Tab key={date} className={`outline-none ${date === selectedTab ? "underline" : ""} text-xl`}>{date}</Tab>
                 })}
                 {
-                    sortedDates.length == 3 && <Tab key={sortedDates[2]} className={`outline-none ${sortedDates[2] === selectedTab ? "underline" : ""} text-2xl`}>{sortedDates[2]}</Tab>
+                    sortedDates.length == 3 && <Tab key={sortedDates[2]} className={`outline-none ${sortedDates[2] === selectedTab ? "underline" : ""} text-xl`}>{sortedDates[2]}</Tab>
                 }
                 {sortedDates.length > 3 && <select className={`outline-none bg-transparent text-xl ${limitedSortedDates.every(el => el !== selectedTab) ? "underline" : ""}`}
                     onChange={(e) => setSelectedTab(e.target.value)} value={selectedTab}
