@@ -11,9 +11,11 @@ export default function Table({ data, selectedTab, setSelectedTab }: { data: [{ 
     const works_in_selected_tab = data[selectedTab as any] || []
     // Calculate the total time worked in selected day
     const totalWorksInTab = (works_in_selected_tab as any).reduce((total: number, work: any) => {
-        if (!work.start || !work.duration) return total;
+        console.log(work)
+        if (!work.start || !work.end) return total;
+        const duration = Math.floor((work.end - work.start) / 1000 / 60);
 
-        return total + work.duration;
+        return total + duration;
     }, 0);
 
     // const sum = Object.values(data).flat().map((e: any) => e.duration).filter(a => a > 0).reduce((a: any, b: any) => (a + b), 0)
