@@ -56,6 +56,7 @@ export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorke
     })
 
     const handleStart = () => {
+        setTime(Number(workMinutes) * 60);
         const now = new Date()
         setSelectedTab(now.toLocaleDateString())
         startWorkPlay()
