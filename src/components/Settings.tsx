@@ -1,11 +1,5 @@
 function Card({ title, value, setValue, step }: { title: string, value: number, setValue: Function, step: number }) {
     function handleInputChange(e: any) {
-        // // No letters or special characters
-        // const regex = /^[0-9\b]+$/
-        // console.log(e)
-        // if (!regex.test(e.key)) {
-        //     return
-        // }
         setValue(e.target.value)
     }
 
@@ -32,7 +26,6 @@ export default function Settings({ showSettings, setWorkMinutes, setBreakMinutes
                 <div className="flex flex-row gap-4 pl-4">
                     <Card title="Work Minutes" value={workMinutes} setValue={setWorkMinutes} step={5}/>
                     <Card title="Break Minutes" value={breakMinutes} setValue={setBreakMinutes} step={1}/>
-
                 </div>
             </div>
 

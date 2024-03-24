@@ -3,6 +3,7 @@
 //         <button className="text-white rounded-md bg-red-500 border-red-500 border-4 px-2 w-16 h-12">{text}</button>
 //     )
 // }
+
 export default function HoursGraph({ data }: { data: { [key: string]: number[] } }) {
     const concattedData: number[] = (([] as number[]).concat(...Object.values(data)))
 
@@ -47,7 +48,7 @@ export default function HoursGraph({ data }: { data: { [key: string]: number[] }
     while (d.length) newArr.push(d.splice(0, 24));
 
     return (
-        <div className="p-4 border-gray-500 border-4 rounded-md my-4">
+        <div className="p-4 border-gray-500 border-4 rounded-md my-4 w-96">
             <h1>Hours Graph</h1>
             {/* <FilterButton text="1 Week" /> */}
             <table className="table-fixed w-80">

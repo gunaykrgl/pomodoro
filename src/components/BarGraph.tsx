@@ -47,7 +47,7 @@ export default function BarGraph({ data }: { data: any }) {
     }
 
     return (
-        <div className='stroke-white p-4 border-gray-500 border-4 rounded-md my-4'>
+        <div className='stroke-white p-4 border-gray-500 border-4 rounded-md my-4 w-96 h-80'>
             <h1>Bar Graph</h1>
             {Object.values(newDict).length > 0 &&
 

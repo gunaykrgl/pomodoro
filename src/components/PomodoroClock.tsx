@@ -99,9 +99,9 @@ export default function PomodoroClock({ workMinutes, breakMinutes, setHoursWorke
     }
 
     return (
-        <div>
-            <h1 className='text-9xl font-micro flex justify-center'>{hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')}</h1>
-            <div className='flex flex-row gap-4 justify-between text-4xl [&>*]:bg-red-400'>
+        <div className='w-96 h-60 [&>*]:overflow-clip'>
+            <h1 className='text-9xl font-micro flex justify-center h-32'>{hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')}</h1>
+            <div className='flex flex-row gap-4 justify-around text-4xl h-28 [&>*]:bg-red-400'>
                 <button className='w-24 h-24' onClick={handleStartStop}><img src={isRunning ? pauseButton : playButton} alt="Play or pause button" /></button>
                 <button className='w-24 h-24' onClick={handleReset}>↺</button>
                 <button className='w-24 h-24' onClick={() => setShowSettings((x: boolean) => !x)}><img src={settingsButton} className='m-auto' /></button>

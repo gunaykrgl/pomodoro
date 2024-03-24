@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        "micro": '"Micro 5"'
+        "micro": ['"Micro 5"', 'Times']
       },
     },
   },
